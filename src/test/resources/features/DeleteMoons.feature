@@ -15,6 +15,9 @@ Feature: DeleteMoons
 		| MoonName |
 		| Moon     |
 		| MoonMoon |
+		|10001      |
+		|10002       |
+
 
 	@SCRUM-TC-32
 	Scenario Outline: As a user I should not be able to remove Moon from the Planetarium when given invalid names
