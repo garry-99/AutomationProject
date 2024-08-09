@@ -14,6 +14,7 @@ import org.junit.After;
 import org.junit.Assert;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -49,10 +50,13 @@ public class ViewCeletialBodiesSteps {
 
         List<Integer> planetIds = PlanetRepository.getPlanets();
         List<Integer> moonIds = MoonRepository.getMoons();
+        System.out.println(tableData);
+        System.out.println(planetIds);
+        System.out.println(moonIds);
 
 
-        boolean isMoonSame = moonIds.equals(tableData.get("moon"));
-        boolean isPlanetSame = planetIds.equals(tableData.get("planet"));
+        boolean isMoonSame = moonIds.equals(tableData.getOrDefault("moon", new ArrayList<>()));
+        boolean isPlanetSame = planetIds.equals(tableData.getOrDefault("planet",new ArrayList<>()));
 
         Assert.assertTrue(isMoonSame && isPlanetSame);
         }

@@ -4,6 +4,7 @@ import com.revature.TestRunner;
 import com.revature.entity.PlanetEntity;
 import com.revature.entity.UserEntity;
 import com.revature.repositories.PlanetRepository;
+import com.revature.repositories.UserRepository;
 import com.revature.utilities.DatabaseScriptRunnerUtility;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
@@ -22,6 +23,8 @@ public class AddPlanetsSteps {
     @Given("The User is already log on.")
     public void the_User_is_already_log_on() {
         // All the steps required to log the user in
+        UserEntity userEntity = new UserEntity("Lisan", "al-gaib");
+        UserRepository.addUser(userEntity);
         TestRunner.planetariumLoginHome.goToPlanetariumLoginHome();
         TestRunner.planetariumLoginHome.sendToUsernameInput("Lisan");
         TestRunner.planetariumLoginHome.sendToPasswordInput("al-gaib");
@@ -33,6 +36,10 @@ public class AddPlanetsSteps {
     public void no_planet_with_name_in_planetarium(String string) {
         // Deletes planet from the planetarium if it already exists
         PlanetEntity planetEntity = new PlanetEntity(string);
+        if(string.equals("nonunique")){
+            PlanetRepository.addPlanet(planetEntity);
+            return;
+        }
         PlanetRepository.deletePlanet(planetEntity);
         TestRunner.refresh();
     }

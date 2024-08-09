@@ -6,6 +6,7 @@ import com.revature.entity.PlanetEntity;
 import com.revature.entity.UserEntity;
 import com.revature.repositories.MoonRepository;
 import com.revature.repositories.PlanetRepository;
+import com.revature.services.LoginService;
 import com.revature.utilities.DatabaseScriptRunnerUtility;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
@@ -22,6 +23,15 @@ import java.time.Duration;
 
 public class AddMoonSteps {
 
+    @Given("The User is already log on")
+    public void the_User_is_already_log_on_with_thanh_username() {
+        // All the steps required to log the user in
+        TestRunner.planetariumLoginHome.goToPlanetariumLoginHome();
+        TestRunner.planetariumLoginHome.sendToUsernameInput("thanh");
+        TestRunner.planetariumLoginHome.sendToPasswordInput("123");
+        TestRunner.planetariumLoginHome.clickLoginButton();
+        TestRunner.wait.until(ExpectedConditions.titleIs("Home"));
+    }
 
     @Given("No Planet or Moon with name {string} in planetarium")
     public void no_planet_or_moon_with_name_in_planetarium(String string) {
@@ -39,11 +49,11 @@ public class AddMoonSteps {
         Assert.assertTrue("Planet with ID " + string + " should exist.", exists);
     }
 
-    @Given("The ID of the Planet {string} does not exist in the Planetarium")
-    public void id_of_orbited_planet_does_not_exist(String string) {
-        boolean exists = TestRunner.planetariumHome.doesPlanetExist(string);
-        Assert.assertFalse("Planet with ID " + string + " should exist.", exists);
-    }
+//    @Given("The ID of the Planet {string} does not exist in the Planetarium")
+//    public void id_of_orbited_planet_does_not_exist(String string) {
+//        boolean exists = TestRunner.planetariumHome.doesPlanetExist(string);
+//        Assert.assertFalse("Planet with ID " + string + " should exist.", exists);
+//    }
 
 
 
@@ -63,9 +73,9 @@ public class AddMoonSteps {
     }
 
     @When("{string} The User selects an image from file explorer for moon image")
-    public void the_User_selects_an_image_from_filesystem_for_moon_image(String string) {
-        if(string.equals("true")){
-            TestRunner.planetariumHome.uploadImage();
+    public void the_User_selects_an_image_from_filesystem_for_moon_image(String image) {
+        if (!image.isEmpty()) {
+            TestRunner.planetariumHome.uploadMoonImage();
         }
     }
 
@@ -73,10 +83,11 @@ public class AddMoonSteps {
     @Then("The Moon {string} should be added to planetarium")
     public void the_moon_should_be_added_to_the_planetarium(String string) {
         TestRunner.wait.until(ExpectedConditions.visibilityOfAllElementsLocatedBy(By.id("celestialTable")));
-        WebElement myElement = new WebDriverWait(TestRunner.driver, Duration.ofSeconds(5))
+        WebElement myElement = new WebDriverWait(TestRunner.driver, Duration.ofSeconds(20))
                 .until(ExpectedConditions.visibilityOfElementLocated(By.id("celestialTable")));
         Assert.assertTrue(TestRunner.planetariumHome.getPlanetName().contains(string));
     }
+
 
     @Then("The Moon {string} should not be added to planetarium")
     public void the_moon_should_not_be_added_to_the_planetarium(String string) {

@@ -1,9 +1,6 @@
 package com.revature.pom;
 
-import org.openqa.selenium.By;
-import org.openqa.selenium.NoAlertPresentException;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
+import org.openqa.selenium.*;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.ui.ExpectedConditions;
@@ -51,6 +48,10 @@ public class PlanetariumHome {
     @FindBy(id = "moonNameInput")
     private WebElement moonNameInput;
 
+    //locate choose file button for moon
+    @FindBy(id = "moonImageInput")
+    private WebElement moonImageInput;
+
     //located the orbited planet id field
     @FindBy(id = "orbitedPlanetInput")
     private  WebElement orbitedPlanetInput;
@@ -97,13 +98,21 @@ public class PlanetariumHome {
     }
 
     public void uploadImage(){
-        Path relativePath = Paths.get("src/test/resources/images/moon-1.jpg");
+        Path relativePath = Paths.get("src/test/resources/images/planet-1.jpg");
         String absolutePath = relativePath.toAbsolutePath().toString();
         planetImageInput.sendKeys(absolutePath);
     }
 
+    public void uploadMoonImage() {
+        Path relativePath = Paths.get("src/test/resources/images/moon-1.jpg");
+        String absolutePath = relativePath.toAbsolutePath().toString();
+        moonImageInput.sendKeys(absolutePath);
+
+    }
+
     public String getPlanetName(){
 
+        wait.until(ExpectedConditions.visibilityOf(celestialTable));
         return celestialTable.getText();
     }
 
@@ -144,28 +153,33 @@ public class PlanetariumHome {
     }
 
     public Map<String, List<Integer>> viewAllData(){
-
-
-//      here we need to wait until all elements of "td" tag is not located no other tag can give the desired results
-        wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(By.tagName("td")));
-
-        List<WebElement> tableRows = celestialTable.findElements(By.tagName("tr"));
         Map<String, List<Integer>> tableData = new HashMap<>();
+        try{
+//            here we need to wait until all elements of "td" tag is not located no other tag can give the desired results
+            wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(By.tagName("td")));
 
-        for(WebElement row: tableRows){
-            List<WebElement> cells = row.findElements(By.tagName("td"));
+            List<WebElement> tableRows = celestialTable.findElements(By.tagName("tr"));
 
 
-            if (cells.size() >= 2) {
-                // Get the first and second cell data
-                String firstCell = cells.get(0).getText();
-                Integer secondCell = Integer.parseInt(cells.get(1).getText());
+            for(WebElement row: tableRows){
+                List<WebElement> cells = row.findElements(By.tagName("td"));
 
-                // Add the second cell data to the map, grouped by the first cell data
-                tableData.computeIfAbsent(firstCell, k -> new ArrayList<>()).add(secondCell);
+
+                if (cells.size() >= 2) {
+                    // Get the first and second cell data
+                    String firstCell = cells.get(0).getText();
+                    Integer secondCell = Integer.parseInt(cells.get(1).getText());
+
+                    // Add the second cell data to the map, grouped by the first cell data
+                    tableData.computeIfAbsent(firstCell, k -> new ArrayList<>()).add(secondCell);
+                }
             }
-        }
 
+        }
+        catch(TimeoutException e){
+            System.out.println();
+        }
         return tableData;
+
     }
 }
